@@ -1,5 +1,5 @@
 // Main entry point for the MH Badminton Bot
-require("dotenv").config();
+// require("dotenv").config();
 require("./keepalive.js");
 const { Telegraf, Scenes, session } = require("telegraf");
 const { resetSlots, unPairSlots, pairSlots, updateDB } = require("./utils");
