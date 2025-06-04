@@ -1,27 +1,17 @@
 // Utility to reset all slots and bookings for a new day
-const db = require("../db.json");
-const updateDB = require("./updateDB")
+const db = require("../db.js");
 
 // Resets slots and bookings, optionally for a provided date
-module.exports = resetSlots = (today) => {
-  let currentDatetime = today ? today : new Date();
-  // Set the time to 15:30:00.000 for the new day
-  currentDatetime.setHours(15);
-  currentDatetime.setMinutes(30);
-  currentDatetime.setSeconds(0);
-  currentDatetime.setMilliseconds(0);
-  // Create empty slots for the day
-  let slots = createEmptySlots(currentDatetime);
-  let bookings = {};
-  // Initialize bookings for each slot
-  slots.forEach((slotPair) => {
-    bookings[slotPair[0]] = { name: "", id: "" };
-    if (slotPair[1]) bookings[slotPair[1]] = { name: "", id: "" };
-  });
-  // Update the db object with new slots and bookings
-  db.currentDatetime = currentDatetime;
-  db.slots = slots;
-  db.bookings = bookings;
-  updateDB(db);
-  return { currentDatetime, slots, bookings };
+module.exports = resetSlots = async (today) => {
+  try {
+    let currentDatetime = today ? today : new Date();
+    await db.query(`UPDATE bot_variable SET value = $1 WHERE key = 'currentDatetime'`, [currentDatetime.getTime()]);
+    await db.query("DELETE FROM booking");
+    currentDatetime.setHours(15, 30, 0, 0);
+    for (let i = 0; i < 7; i++) {
+      await db.query("INSERT INTO booking (user_id, name, slot) VALUES ($1, $2, $3)", ["", "", currentDatetime.getTime()+(i*60*60*1000)]);
+    }
+  } catch (error) {
+    console.error("Error resetting slots:", error.message);
+  }
 };
