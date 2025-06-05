@@ -1,4 +1,4 @@
-const { getFiles } = require("./utilHandler.js");
+const getFiles = require("../utils/getFiles");
 const fileNames = getFiles("../scenes");
 
 const sceneHandler = () => {
