@@ -1,5 +1,5 @@
 // Command handler loader: dynamically loads and registers all command modules
-const { getFiles } = require("./utilHandler.js");
+const getFiles = require("../utils/getFiles");
 const fileNames = getFiles("../commands");
 
 // Registers each command module with the bot
