@@ -1,6 +1,6 @@
 // Command handler for cancelling a reserved slot
 const db = require("../db.js");
-const { isToday } = require("../handlers/utilHandler.js");
+const { isToday } = require("../utils");
 
 module.exports = {
   name: "cancel",

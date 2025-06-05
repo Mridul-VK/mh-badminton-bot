@@ -1,6 +1,6 @@
 const { Scenes } = require("telegraf");
 const db = require("../db.js");
-const { pairSlots, isAdmin, isPrivate } = require("../handlers/utilHandler.js");
+const { pairSlots, isAdmin, isPrivate } = require("../utils");
 
 //Initialize the scene for collecting admin IDs
 const addAdminScene = new Scenes.BaseScene("ADD_ADMIN_SCENE");

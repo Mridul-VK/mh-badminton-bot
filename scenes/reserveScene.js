@@ -1,5 +1,5 @@
 const { Scenes } = require("telegraf");
-const { laydownButtons, pairSlots, isToday, isPrivate } = require("../handlers/utilHandler.js");
+const { laydownButtons, pairSlots, isToday, isPrivate } = require("../utils");
 const db = require("../db");
 
 const STEP1 = async (ctx) => {

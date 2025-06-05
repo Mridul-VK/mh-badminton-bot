@@ -1,5 +1,5 @@
 // Command handler for displaying today's bookings
-const { isPrivate, isToday } = require("../handlers/utilHandler.js");
+const { isPrivate, isToday } = require("../utils");
 const db = require("../db.js");
 
 module.exports = {

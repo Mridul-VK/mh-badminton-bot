@@ -2,7 +2,7 @@
 // require("dotenv").config();
 require("./keepalive.js");
 const { Telegraf, Scenes, session } = require("telegraf");
-const { isPrivate } = require("./handlers/utilHandler.js");
+const { isPrivate } = require("./utils");
 const db = require("./db.js");
 const handler = require("./handlers/commandHandler.js");
 const sceneHandler = require("./handlers/sceneHandler.js");
