@@ -1,31 +1,27 @@
 // Command handler for displaying today's bookings
-const { resetSlots } = require("../utils");
-const db = require('../db.json');
+const { isPrivate, isToday } = require("../utils");
+const db = require("../db.js");
 
 module.exports = {
   name: "enlist",
   // Callback function for the enlist command
-  callback: (ctx) => {
-    const today = new Date();
-    let { currentDatetime } = db
+  callback: async (ctx) => {
     // Reset slots if the day has changed
-    if (today.getDate() > currentDatetime.getDate()) {
-      ({ currentDatetime, slots, bookings } = resetSlots(today));
-    }
+    await isToday();
+    
     // Restrict command usage to group chats only
-    if (ctx.chat.type == "private")
-      return ctx.reply(
-        `<b>❗❗IMPORTANT❗❗</b>\n\nI'm sorry but to make sure that you're one of our MH inmates, we have restricted all commands in private chats. Please contact the Hostel Committee to add you to the MH Badminton group\n\nThank you 😄`,
-        {
-          parse_mode: "HTML",
-        }
+    await isPrivate(ctx);
+    
+    // Fetching all the bookings
+    let bookings = await db.query("SELECT * FROM booking ORDER BY slot");
+    let bookingsArray = [];
+    for (let booking of bookings.rows) {
+      bookingsArray.push(
+        `${new Date(parseInt(booking.slot)).toLocaleTimeString()}: ${booking.name && booking.user_id ? `[${booking.name}](tg://user?id=${booking.user_id})` : ""}`
       );
-    // Get and display the formatted list of today's bookings
-    const bookingListArray = getBookingsArray();
+    }
     ctx.reply(
-      `*Today's Bookings*\n${"-".repeat(20)}\n\n${bookingListArray.join(
-        "\n"
-      )}`,
+      `*Today's Bookings*\n${"-".repeat(20)}\n\n${bookingsArray.join("\n")}`,
       {
         parse_mode: "Markdown",
       }

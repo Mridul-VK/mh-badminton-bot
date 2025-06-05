@@ -5,7 +5,7 @@ const db = require("../db.js");
 module.exports = resetSlots = async (today) => {
   try {
     let currentDatetime = today ? today : new Date();
-    await db.query(`UPDATE bot_variable SET value = $1 WHERE key = 'currentDatetime'`, [currentDatetime.getTime()]);
+    await db.query(`INSERT INTO bot_variable (key, value) VALUES ('currentDatetime', $1) ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value`, [currentDatetime.getTime()]);
     await db.query("DELETE FROM booking");
     currentDatetime.setHours(15, 30, 0, 0);
     for (let i = 0; i < 7; i++) {

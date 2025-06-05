@@ -2,7 +2,7 @@
 // require("dotenv").config();
 require("./keepalive.js");
 const { Telegraf, Scenes, session } = require("telegraf");
-const { resetSlots, unPairSlots, pairSlots, updateDB } = require("./utils");
+const { isPrivate } = require("./utils");
 const db = require("./db.js");
 const handler = require("./commandHandler.js");
 const addAdminScene = require("./scenes/addAdminScene.js");
@@ -11,8 +11,6 @@ const addAdminScene = require("./scenes/addAdminScene.js");
 const bot = new Telegraf(process.env.TOKEN);
 
 let slots;
-
-// db.query('SELECT * FROM booking').then(result => console.log(result));
 
 // Set up the scene manager for multi-step interactions
 const stage = new Scenes.Stage([addAdminScene]);
@@ -40,17 +38,16 @@ bot.start(async (ctx) => {
       "Hello there👋🏻! I'm the MH Badminton Bot 🤖. To reserve your slots for playing Badminton, you must be in MH Badminton group. It's a committee policy to make sure that you're one of the MH inmates.\n\nThank you for understanding 😊";
     ctx.reply(privateStartReply);
   } else {
-    ctx.reply(db.startMessage);
+    const res = await db.query("SELECT * FROM bot_variable WHERE key = 'startMessage'");
+    ctx.reply(res.rows[0].value);
   }
 });
 
 // Handler for the /help command
-bot.help((ctx) => {
-  if (ctx.chat.type == "private")
-    return ctx.reply(db.privateCommandReply, {
-      parse_mode: "HTML",
-    });
-  ctx.reply(db.helpMessage, {
+bot.help(async (ctx) => {
+  await isPrivate(ctx);
+  const res = await db.query("SELECT * FROM bot_variable WHERE key = 'helpMessage'");
+  ctx.reply(res.rows[0].value, {
     parse_mode: "HTML",
   });
 });
@@ -85,44 +82,12 @@ bot.on("callback_query", async (ctx) => {
     //update db with new bookings and slots
     db.bookings = bookings;
     db.slots = slots;
-    updateDB(db);
 
     // Send confirmation message to the user
     await ctx.telegram.sendMessage(
       ctx.chat.id,
       `Your slot has been successfully reserved!`
     );
-  }
-
-  // Handle slot cancellation
-  if (callbackData.command == "cancel") {
-    let userSlots = [];
-
-    // Find all slots reserved by the user
-    for (let slot in bookings) {
-      bookings[slot].id == ctx.callbackQuery.from.id
-        ? userSlots.push(parseInt(slot))
-        : null;
-    }
-    userSlots.sort();
-    userSlots = pairSlots(userSlots);
-
-    // Clear the selected slot
-    bookings[userSlots[indices[0]][indices[1]]] = { name: "", id: "" };
-
-    // Add the slot back to available slots
-    let currentSlots = unPairSlots(slots);
-    currentSlots.push(userSlots[indices[0]][indices[1]]);
-    currentSlots.sort();
-    slots = pairSlots(currentSlots);
-
-    //update db with new bookings and slots
-    db.bookings = bookings;
-    db.slots = slots;
-    updateDB(db);
-
-    // Send confirmation message to the user
-    await ctx.reply("Your selected slot has been successfully canceled");
   }
 
   // Acknowledge the callback query
