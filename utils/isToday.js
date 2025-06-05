@@ -1,5 +1,5 @@
 const db = require('../db');
-const { resetSlots } = require('./resetSlots');
+const resetSlots = require('./resetSlots');
 
 module.exports = isToday = async () => {
     const today = new Date();
