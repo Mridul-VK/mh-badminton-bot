@@ -88,7 +88,7 @@ addAdminScene.enter(async (ctx) => {
 
 addAdminScene.on("callback_query", async (ctx) => {
   // If the user who initiated the command is not the same as the user who clicked the button, ignore the callback
-  if (parseInt(ctx.callbackQuery.from.id) == parseInt(ctx.scene.state.commandUser.id)) {
+  if (parseInt(ctx.callbackQuery.from.id) != parseInt(ctx.scene.state.commandUser.id)) {
     ctx.deleteMessage(ctx.callbackQuery.message.message_id); // Delete the message with the inline keyboard
     ctx.answerCbQuery("Only the user who initiated the command can respond.");
     return ctx.scene.leave();
