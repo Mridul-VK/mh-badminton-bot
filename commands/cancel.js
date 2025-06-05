@@ -1,6 +1,6 @@
 // Command handler for cancelling a reserved slot
 const db = require("../db.js");
-const isToday = require("../utils");
+const { isToday } = require("../handlers/utilHandler.js");
 
 module.exports = {
   name: "cancel",
@@ -21,7 +21,7 @@ module.exports = {
         ? await db.query("UPDATE booking SET user_id = '', name = '' WHERE user_id = $1", [ctx.from.id]) && ctx.reply("Your slot has been successfully cancelled.")
         : ctx.reply("You have no slots reserved to cancel.");
     } catch (error) {
-      console.error("Error cancelling slot:", error.message);
+      console.log("Error cancelling slot:", error);
     }
   },
 };

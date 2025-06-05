@@ -1,9 +1,9 @@
 // Command handler loader: dynamically loads and registers all command modules
-const { getFiles } = require("./utils");
+const { getFiles } = require("./utilHandler.js");
 const fileNames = getFiles("../commands");
 
 // Registers each command module with the bot
-const handler = (bot) => {
+const commandHandler = (bot) => {
   for (let fileName of fileNames) {
     let commandFile = require(fileName);
     commandFile = commandFile.default ? commandFile.default : commandFile
@@ -11,4 +11,4 @@ const handler = (bot) => {
   }
 };
 
-module.exports = handler;
+module.exports = commandHandler;

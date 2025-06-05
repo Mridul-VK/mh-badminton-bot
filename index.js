@@ -2,18 +2,16 @@
 // require("dotenv").config();
 require("./keepalive.js");
 const { Telegraf, Scenes, session } = require("telegraf");
-const { isPrivate } = require("./utils");
+const { isPrivate } = require("./handlers/utilHandler.js");
 const db = require("./db.js");
-const handler = require("./commandHandler.js");
-const addAdminScene = require("./scenes/addAdminScene.js");
+const handler = require("./handlers/commandHandler.js");
+const sceneHandler = require("./handlers/sceneHandler.js");
 
 // Initialize the Telegram bot with the provided token
 const bot = new Telegraf(process.env.TOKEN);
 
-let slots;
-
 // Set up the scene manager for multi-step interactions
-const stage = new Scenes.Stage([addAdminScene]);
+const stage = new Scenes.Stage(sceneHandler());
 bot.use(session());
 
 // Command to abort any ongoing scene operation
@@ -51,49 +49,6 @@ bot.help(async (ctx) => {
     parse_mode: "HTML",
   });
 });
-
-// Handler for inline keyboard callback queries
-bot.on("callback_query", async (ctx) => {
-  // Parse callback data to determine action and slot indices
-  const callbackData = JSON.parse(ctx.callbackQuery.data);
-  const indices = callbackData.indices.split(",");
-  // Remove the inline keyboard message after selection
-  await ctx.telegram.deleteMessage(
-    ctx.chat.id,
-    ctx.callbackQuery.message.message_id
-  );
-  // Handle slot reservation
-  if (callbackData.command == "reserve") {
-    bookings[slots[indices[0]][indices[1]]] = {
-      name: ctx.callbackQuery.from.first_name
-        ? `${ctx.callbackQuery.from.first_name} ${
-            ctx.callbackQuery.from.last_name
-              ? ctx.callbackQuery.from.last_name
-              : ""
-          }`
-        : "Anonymus user",
-      id: ctx.callbackQuery.from.id,
-    };
-    // Remove the reserved slot from available slots
-    slots[indices[0]].splice(indices[1], 1);
-    if (!slots[indices[0]].length) {
-      slots.splice(indices[0], 1);
-    }
-    //update db with new bookings and slots
-    db.bookings = bookings;
-    db.slots = slots;
-
-    // Send confirmation message to the user
-    await ctx.telegram.sendMessage(
-      ctx.chat.id,
-      `Your slot has been successfully reserved!`
-    );
-  }
-
-  // Acknowledge the callback query
-  ctx.telegram.answerCbQuery(ctx.callbackQuery.id);
-});
-
 
 // Launch the bot and initialize slots/bookings
 bot.launch(() => {

@@ -1,40 +1,28 @@
 // Utility to generate inline keyboard buttons for slot selection
-module.exports = laydownButtons = (slots, command) => {
+module.exports = laydownButtons = (slots) => {
   const buttons = [];
   // Iterate through each slot and create button(s) for each
-  slots.forEach((slot, index) => {
-    if (slot.length == 2) {
+  slots.forEach((availableSlotObject) => {
+    if (availableSlotObject.length == 2) {
       // If slot pair, create two buttons in a row
       buttons.push([
         {
-          text: new Date(slot[0]).toLocaleTimeString(),
-          callback_data: JSON.stringify({
-            indices: [index, 0].join(),
-            command,
-          }),
+          text: new Date(parseInt(availableSlotObject[0].slot)).toLocaleTimeString(),
+          callback_data: JSON.stringify({slot: availableSlotObject[0].slot}),
         },
         {
-          text: new Date(slot[1]).toLocaleTimeString(),
-          callback_data: JSON.stringify({
-            indices: [index, 1].join(),
-            command,
-          }),
+          text: new Date(parseInt(availableSlotObject[1].slot)).toLocaleTimeString(),
+          callback_data: JSON.stringify({slot: availableSlotObject[1].slot}),
         },
       ]);
-    } else if (slot.length == 1) {
+    } else if (availableSlotObject.length == 1) {
       // If only one slot, create a single button row
       buttons.push([
         {
-          text: new Date(slot[0]).toLocaleTimeString(),
-          callback_data: JSON.stringify({
-            indices: [index, 0].join(),
-            command,
-          }),
+          text: new Date(parseInt(availableSlotObject[0].slot)).toLocaleTimeString(),
+          callback_data: JSON.stringify({slot: availableSlotObject[0].slot}),
         },
       ]);
-    } else {
-      // Remove empty slot rows
-      buttons.splice(index, 1);
     }
   });
   return buttons;
