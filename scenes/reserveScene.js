@@ -6,7 +6,9 @@ const STEP1 = async (ctx) => {
     await isToday();
     // Restrict command usage to group chats only
     const isPrivateChat = await isPrivate(ctx); // Ensure the command is not used in a private chat
-    isPrivateChat ? ctx.scene.leave() : null;
+    if (isPrivateChat) {
+        return ctx.scene.leave();
+    }
     // Prevent double booking by the same user
     const booking = (await db.query("SELECT * FROM booking WHERE user_id = $1", [
         ctx.message.from.id,
