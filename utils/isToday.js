@@ -9,7 +9,7 @@ module.exports = isToday = async () => {
         : currentDatetime = new Date(parseInt(currentDatetime.rows[0].value));
 
     // Reset slots if the day has changed
-    if ((today.getTime() - currentDatetime.getTime()) / (1000 * 60 * 60 * 24) >= 1) {
+    if (today.getFullYear() !== currentDatetime.getFullYear() || today.getMonth() !== currentDatetime.getMonth() || today.getDate() !== currentDatetime.getDate()) {
         await resetSlots(today);
     }
 };

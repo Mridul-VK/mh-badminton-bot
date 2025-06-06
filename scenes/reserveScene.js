@@ -50,6 +50,7 @@ const STEP1 = async (ctx) => {
 };
 
 const STEP2 = async (ctx) => {
+    if(!ctx.callbackQuery?.data) return ctx.scene.leave()
     if (ctx.wizard.state.user_id != ctx.callbackQuery.from.id) {
         return ctx.reply("Unauthorized action! You cannot reserve a slot for someone else.");
     }
