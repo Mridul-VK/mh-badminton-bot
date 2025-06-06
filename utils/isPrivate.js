@@ -7,4 +7,5 @@ module.exports = isPrivate = async (ctx) => {
             parse_mode: "HTML",
         });
     }
+    return;
 };
