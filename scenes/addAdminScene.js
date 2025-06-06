@@ -7,7 +7,8 @@ const addAdminScene = new Scenes.BaseScene("ADD_ADMIN_SCENE");
 
 //Enter the scene when the command is triggered
 addAdminScene.enter(async (ctx) => {
-  await isPrivate(ctx); // Ensure the command is not used in a private chat
+  const isPrivateChat = await isPrivate(ctx); // Ensure the command is not used in a private chat
+  isPrivateChat ? ctx.scene.leave() : null;
 
   // Check if the user is the owner or an admin
   let res = await isAdmin(ctx);
