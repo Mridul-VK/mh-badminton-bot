@@ -8,10 +8,13 @@ module.exports = {
   callback: async (ctx) => {
     // Reset slots if the day has changed
     await isToday();
-    
+
     // Restrict command usage to group chats only
-    await isPrivate(ctx);
-    
+    const isPrivateChat = await isPrivate(ctx); // Ensure the command is not used in a private chat
+    if (isPrivateChat) {
+      return;
+    }
+
     // Fetching all the bookings
     let bookings = await db.query("SELECT * FROM booking ORDER BY slot");
     let bookingsArray = [];

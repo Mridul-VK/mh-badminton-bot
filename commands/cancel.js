@@ -11,7 +11,10 @@ module.exports = {
       await isToday();
 
       // Restrict command usage to group chats only
-      isPrivate(ctx);
+      const isPrivateChat = await isPrivate(ctx); // Ensure the command is not used in a private chat
+      if(isPrivateChat) {
+        return;
+      }
 
       // Find all slots reserved by the user
       const userSlot = await db.query("SELECT * FROM booking WHERE user_id = $1", [ctx.from.id]);
