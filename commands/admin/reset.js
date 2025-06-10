@@ -5,6 +5,7 @@ module.exports = {
     callback: async (ctx) => {
         try {
             await resetSlots();
+            ctx.reply("All slots have been reset successfully.");
         } catch (error) {
             console.error("An error occurred while executing the reset command:", error);
         }
