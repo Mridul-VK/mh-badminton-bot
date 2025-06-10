@@ -1,5 +1,5 @@
 // Main entry point for the MH Badminton Bot
-require("dotenv").config();
+// require("dotenv").config();
 require("./keepalive.js");
 const { Telegraf, Scenes, session } = require("telegraf");
 const { isPrivate, resetSlots } = require("./utils");
@@ -20,6 +20,8 @@ cron.schedule("0 0 0 * * *", async () => {
   } catch (error) {
     console.error("Error resetting slots:", error);
   }
+}, {
+  timezone: "Asia/Kolkata"
 });
 
 // Set up the scene manager for multi-step interactions
