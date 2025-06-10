@@ -17,7 +17,7 @@ module.exports = {
     let bookingsArray = [];
     for (let booking of bookings.rows) {
       bookingsArray.push(
-        `${new Date(parseInt(booking.slot)).toLocaleTimeString()}: ${booking.name && booking.user_id ? `[${booking.name}](tg://user?id=${booking.user_id})` : ""}`
+        `${new Date(parseInt(booking.slot)).toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata' })}: ${booking.name && booking.user_id ? `[${booking.name}](tg://user?id=${booking.user_id})` : ""}`
       );
     }
     ctx.reply(

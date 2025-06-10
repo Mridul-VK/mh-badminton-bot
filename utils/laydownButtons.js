@@ -9,11 +9,11 @@ module.exports = laydownButtons = (slots) => {
       // If slot pair, create two buttons in a row
       buttons.push([
         {
-          text: new Date(parseInt(availableSlotObject[0].slot)).toLocaleTimeString(),
+          text: new Date(parseInt(availableSlotObject[0].slot)).toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata' }),
           callback_data: JSON.stringify({ slot: availableSlotObject[0].slot }),
         },
         {
-          text: new Date(parseInt(availableSlotObject[1].slot)).toLocaleTimeString(),
+          text: new Date(parseInt(availableSlotObject[1].slot)).toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata' }),
           callback_data: JSON.stringify({ slot: availableSlotObject[1].slot }),
         },
       ]);
@@ -21,7 +21,7 @@ module.exports = laydownButtons = (slots) => {
       // If only one slot, create a single button row
       buttons.push([
         {
-          text: new Date(parseInt(availableSlotObject[0].slot)).toLocaleTimeString(),
+          text: new Date(parseInt(availableSlotObject[0].slot)).toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata' }),
           callback_data: JSON.stringify({ slot: availableSlotObject[0].slot }),
         },
       ]);
