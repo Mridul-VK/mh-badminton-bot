@@ -31,6 +31,10 @@ const STEP1 = async (ctx) => {
 
     // If all slots are reserved
     if (!availableSlots.length) {
+        if (new Date().getHours() > 21 && new Date().getMinutes() > 15) {
+            ctx.reply("Oops... You're a little bit late. Today's slot booking time is over. Try again tomorrow 😁");
+            return ctx.scene.leave();
+        }
         ctx.reply("We're sorry, All slots are reserved");
         return ctx.scene.leave();
     }

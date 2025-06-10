@@ -3,6 +3,8 @@ const db = require("../db.js");
 
 module.exports = {
   name: "cancel",
+  desc: "Cancel your slot",
+  isAdmin: false,
   // Callback function for the cancel command
   callback: async (ctx) => {
     try {

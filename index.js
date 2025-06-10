@@ -57,10 +57,30 @@ bot.start(async (ctx) => {
 
 // Handler for the /help command
 bot.help(async (ctx) => {
-  await isPrivate(ctx);
-  const res = await db.query("SELECT * FROM bot_variable WHERE key = 'helpMessage'");
-  ctx.reply(res.rows[0].value, {
-    parse_mode: "HTML",
+  const isPrivateChat = await isPrivate(ctx);
+  if (isPrivateChat) return;
+
+  const fileNames = getFiles("../commands");
+  const userCommandArray = [];
+  const adminCommandArray = [];
+  const adminIds = [];
+  let admins = await db.query("SELECT * FROM admin");
+  admins.rows.forEach(admin => {
+    adminIds.push(parseInt(admin.user_id));
+  });
+  let owner = await db.query("SELECT * FROM bot_variable WHERE key = 'owner'");
+  owner = owner.rows[0].value;
+  adminIds.push(owner);
+  for (let fileName of fileNames) {
+    let commandFile = require(fileName);
+    commandFile = commandFile.default ? commandFile.default : commandFile;
+    let commandName = commandFile.name;
+    let commandDesc = commandFile.desc;
+    if (commandFile.isAdmin) adminCommandArray.push(`/${commandName} - ${commandDesc}`);
+    else userCommandArray.push(`/${commandName} - ${commandDesc}`);
+  }
+  ctx.reply(`🤝 *Help Desk* 🤝\n${"-".repeat(18)}\nYou can use me by using the following commands.\n\n${adminIds.find(id => id == ctx.from.id) ? `*ADMIN COMMANDS*\n${"-".repeat(20)}\n${adminCommandArray.join("\n")}\n\n*GENERAL COMMANDS*\n${"-".repeat(23)}\n` : ""}${userCommandArray.join("\n")}`, {
+    parse_mode: "Markdown",
   });
 });
 

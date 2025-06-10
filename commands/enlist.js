@@ -4,6 +4,8 @@ const db = require("../db.js");
 
 module.exports = {
   name: "enlist",
+  desc: "Enlist bookings",
+  isAdmin: false,
   // Callback function for the enlist command
   callback: async (ctx) => {
     // Restrict command usage to group chats only
