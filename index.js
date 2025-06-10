@@ -2,13 +2,25 @@
 // require("dotenv").config();
 require("./keepalive.js");
 const { Telegraf, Scenes, session } = require("telegraf");
-const { isPrivate } = require("./utils");
+const { isPrivate, resetSlots } = require("./utils");
 const db = require("./db.js");
 const handler = require("./handlers/commandHandler.js");
 const sceneHandler = require("./handlers/sceneHandler.js");
+const cron = require("node-cron");
 
 // Initialize the Telegram bot with the provided token
 const bot = new Telegraf(process.env.TOKEN);
+
+/* The `cron.schedule()` code snippet is setting up a cron job
+using the `node-cron` library in Node.js. */
+cron.schedule("0 0 0 * * *", async () => {
+  // Daily reset of slots at midnight
+  try {
+    await resetSlots();
+  } catch (error) {
+    console.error("Error resetting slots:", error);
+  }
+});
 
 // Set up the scene manager for multi-step interactions
 const stage = new Scenes.Stage(sceneHandler());

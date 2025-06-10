@@ -1,18 +1,14 @@
 // Command handler for cancelling a reserved slot
 const db = require("../db.js");
-const { isToday } = require("../utils");
 
 module.exports = {
   name: "cancel",
   // Callback function for the cancel command
   callback: async (ctx) => {
     try {
-      // Reset slots if the day has changed
-      await isToday();
-
       // Restrict command usage to group chats only
       const isPrivateChat = await isPrivate(ctx); // Ensure the command is not used in a private chat
-      if(isPrivateChat) {
+      if (isPrivateChat) {
         return;
       }
 

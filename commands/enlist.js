@@ -1,14 +1,11 @@
 // Command handler for displaying today's bookings
-const { isPrivate, isToday } = require("../utils");
+const { isPrivate } = require("../utils");
 const db = require("../db.js");
 
 module.exports = {
   name: "enlist",
   // Callback function for the enlist command
   callback: async (ctx) => {
-    // Reset slots if the day has changed
-    await isToday();
-
     // Restrict command usage to group chats only
     const isPrivateChat = await isPrivate(ctx); // Ensure the command is not used in a private chat
     if (isPrivateChat) {

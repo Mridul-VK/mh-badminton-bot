@@ -1,4 +1,5 @@
-// Utility to flatten paired slots into a single array
+/* The code snippet is defining a JavaScript function named `unPairSlots` and exporting it as a module
+using `module.exports`. */
 module.exports = unPairSlots = (slots) => {
   let currentSlots = [];
   // Iterate through each slot pair and add both slots to the result array

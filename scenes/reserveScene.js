@@ -1,9 +1,8 @@
 const { Scenes } = require("telegraf");
-const { laydownButtons, pairSlots, isToday, isPrivate } = require("../utils");
+const { laydownButtons, pairSlots, isPrivate } = require("../utils");
 const db = require("../db");
 
 const STEP1 = async (ctx) => {
-    await isToday();
     // Restrict command usage to group chats only
     const isPrivateChat = await isPrivate(ctx); // Ensure the command is not used in a private chat
     if (isPrivateChat) {
@@ -25,7 +24,10 @@ const STEP1 = async (ctx) => {
 
     const availableSlots = (await db.query(
         "SELECT * FROM booking WHERE user_id = ''",
-    )).rows;
+    )).rows.filter((slot) => {
+        // Filter out slots that are in the past
+        return (slot.slot - 15 * 60 * 1000) > new Date().getTime();
+    });
 
     // If all slots are reserved
     if (!availableSlots.length) {
@@ -35,9 +37,9 @@ const STEP1 = async (ctx) => {
     // Show available slots for today
     if (availableSlots.length) {
         availableSlots.sort((a, b) => a.slot - b.slot);
-        slots = pairSlots(availableSlots);
+        let slots = pairSlots(availableSlots);
         ctx.reply(
-            `Alright! let's get you a slot to play Badminton today. Here are the available slots today. Go on, select one that you're comfortable with.`,
+            `Alright! let's get you a slot to play Badminton today. Here are the available slots today. Go on, select one that you're comfortable with.\n\nIf you want to abort this operation, just type /abort`,
             {
                 reply_markup: {
                     inline_keyboard: laydownButtons(slots),
@@ -50,7 +52,7 @@ const STEP1 = async (ctx) => {
 };
 
 const STEP2 = async (ctx) => {
-    if(!ctx.callbackQuery?.data) return ctx.scene.leave()
+    if (!ctx.callbackQuery?.data) return ctx.scene.leave();
     if (ctx.wizard.state.user_id != ctx.callbackQuery.from.id) {
         return ctx.reply("Unauthorized action! You cannot reserve a slot for someone else.");
     }
