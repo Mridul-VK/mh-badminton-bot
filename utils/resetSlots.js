@@ -6,10 +6,13 @@ const db = require("../db.js");
 Node.js environment. Here's a breakdown of what the function does: */
 module.exports = resetSlots = async (today) => {
   try {
+    console.log("inside resetSlots");
     let currentDatetime = today ? today : new Date();
+    console.log(currentDatetime);
     await db.query(`INSERT INTO bot_variable (key, value) VALUES ('currentDatetime', $1) ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value`, [currentDatetime.getTime()]);
     await db.query("DELETE FROM booking");
     currentDatetime.setHours(15, 30, 0, 0);
+    console.log(currentDatetime);
     for (let i = 0; i < 7; i++) {
       await db.query("INSERT INTO booking (user_id, name, slot) VALUES ($1, $2, $3)", ["", "", currentDatetime.getTime() + (i * 60 * 60 * 1000)]);
     }
