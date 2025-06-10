@@ -24,10 +24,7 @@ const STEP1 = async (ctx) => {
 
     const availableSlots = (await db.query(
         "SELECT * FROM booking WHERE user_id = ''",
-    )).rows.filter((slot) => {
-        // Filter out slots that are in the past
-        return (slot.slot - 15 * 60 * 1000) > new Date().getTime();
-    });
+    )).rows;
 
     // If all slots are reserved
     if (!availableSlots.length) {
