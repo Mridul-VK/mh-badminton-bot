@@ -1,5 +1,5 @@
 // Command handler for entering the add admin scene
-export default {
+module.exports = {
   name: "addAdmin",
   // Callback function to trigger the add admin scene
   callback: (ctx) => {
