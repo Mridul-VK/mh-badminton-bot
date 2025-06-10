@@ -5,6 +5,7 @@ module.exports = laydownButtons = (slots) => {
   const buttons = [];
   // Iterate through each slot and create button(s) for each
   slots.forEach((availableSlotObject) => {
+    console.log(new Date(parseInt(availableSlotObject[0].slot)).toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata' }));
     if (availableSlotObject.length == 2) {
       // If slot pair, create two buttons in a row
       buttons.push([
