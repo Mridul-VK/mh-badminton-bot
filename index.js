@@ -4,7 +4,7 @@ require("./keepalive.js");
 const { Telegraf, Scenes, session } = require("telegraf");
 const { isPrivate, resetSlots } = require("./utils");
 const db = require("./db.js");
-const handler = require("./handlers/commandHandler.js");
+const { commandHandler } = require("./handlers/commandHandler.js");
 const sceneHandler = require("./handlers/sceneHandler.js");
 const cron = require("node-cron");
 
@@ -40,7 +40,7 @@ stage.command("abort", (ctx) => {
 bot.use(stage.middleware());
 
 // Activate the command handler to load and handle all commands
-handler(bot);
+commandHandler(bot);
 
 // Handler for the /start command
 bot.start(async (ctx) => {

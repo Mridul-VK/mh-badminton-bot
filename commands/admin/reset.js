@@ -6,9 +6,6 @@ module.exports = {
     isAdmin: true,
     callback: async (ctx) => {
         try {
-            const isPrivateChat = await isPrivate(ctx); // Ensure the command is not used in a private chat
-            if (isPrivateChat) return;
-
             let res = await isAdmin(ctx);
             if (!res) return;
 

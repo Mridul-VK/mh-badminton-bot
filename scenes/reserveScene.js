@@ -1,5 +1,6 @@
 const { Scenes } = require("telegraf");
 const { laydownButtons, pairSlots, isPrivate } = require("../utils");
+const { commands } = require("../handlers/commandHandler");
 const db = require("../db");
 
 const STEP1 = async (ctx) => {
@@ -24,11 +25,11 @@ const STEP1 = async (ctx) => {
 
     const availableSlots = (await db.query(
         "SELECT * FROM booking WHERE user_id = ''",
-    )).rows;
+    )).rows.filter(slot => slot.slot - 15 * 60 * 1000 > new Date().getTime());
 
     // If all slots are reserved
     if (!availableSlots.length) {
-        if (new Date().getHours() > 21 && new Date().getMinutes() > 15) {
+        if (new Date().getHours() >= 21 && new Date().getMinutes() >= 15) {
             ctx.reply("Oops... You're a little bit late. Today's slot booking time is over. Try again tomorrow 😁");
             return ctx.scene.leave();
         }
@@ -68,6 +69,8 @@ const STEP2 = async (ctx) => {
     await ctx.reply(
         `Your slot has been successfully reserved!`
     );
+
+    await commands.enlist(ctx);
     ctx.answerCbQuery();
     return ctx.scene.leave();
 };
