@@ -51,7 +51,7 @@ bot.start(async (ctx) => {
     ctx.reply(privateStartReply);
   } else {
     const res = await db.query("SELECT * FROM bot_variable WHERE key = 'startMessage'");
-    ctx.reply(res.rows[0].value);
+    ctx.reply(res.rows[0].value.replaceAll("\\" + "n", "\n"), { parse_mode: "Markdown" });
   }
 });
 
