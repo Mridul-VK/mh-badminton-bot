@@ -28,11 +28,13 @@ const STEP1 = async (ctx) => {
     )).rows.filter(slot => slot.slot - 15 * 60 * 1000 > new Date().getTime());
 
     // If all slots are reserved
+    const reqdDate = new Date();
+    reqdDate.setUTCHours(3, 45);
+    if (Date.now() > reqdDate) {
+        ctx.reply("Oops... You're a little bit late. Today's slot booking time is over. Try again tomorrow 😁");
+        return ctx.scene.leave();
+    }
     if (!availableSlots.length) {
-        if (new Date().getHours() >= 21 && new Date().getMinutes() >= 15) {
-            ctx.reply("Oops... You're a little bit late. Today's slot booking time is over. Try again tomorrow 😁");
-            return ctx.scene.leave();
-        }
         ctx.reply("We're sorry, All slots are reserved");
         return ctx.scene.leave();
     }
