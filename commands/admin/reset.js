@@ -6,11 +6,7 @@ module.exports = {
     isAdmin: true,
     callback: async (ctx) => {
         try {
-            let res = await isAdmin(ctx);
-            if (!res) return;
-
-            await resetSlots();
-            ctx.reply("All slots have been reset successfully.");
+            await ctx.scene.enter("RESET_SCENE");
         } catch (error) {
             console.error("An error occurred while executing the reset command:", error);
         }
