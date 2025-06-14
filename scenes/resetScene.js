@@ -1,7 +1,7 @@
 const { Scenes, Context } = require("telegraf");
 const { isAdmin } = require("../utils");
 
-const resetScene = Scenes.BaseScene("RESET_SCENE");
+const resetScene = new Scenes.BaseScene("RESET_SCENE");
 
 resetScene.enter(
     /**
