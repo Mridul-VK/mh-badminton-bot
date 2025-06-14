@@ -62,3 +62,5 @@ resetScene.on("callback_query",
 
         }
     });
+
+module.exports = resetScene;
