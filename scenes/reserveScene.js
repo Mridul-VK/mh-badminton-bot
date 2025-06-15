@@ -27,9 +27,14 @@ const STEP1 = async (ctx) => {
         "SELECT * FROM booking WHERE user_id = ''",
     )).rows.filter(slot => slot.slot - 15 * 60 * 1000 > new Date().getTime());
 
+    const reqdDate = new Date().setUTCHours(15, 45);
+    if (Date.now() > reqdDate) {
+        await ctx.reply("Oops, you're a bit too late buddy. Slot booking time is up already!");
+        return ctx.scene.leave();
+    }
     // If all slots are reserved
     if (!availableSlots.length) {
-        ctx.reply("We're sorry, Either booking time is up or All slots are reserved");
+        ctx.reply("We're sorry, looks like all slots are reserved");
         return ctx.scene.leave();
     }
     // Show available slots for today
