@@ -27,7 +27,7 @@ const STEP1 = async (ctx) => {
         "SELECT * FROM booking WHERE user_id = ''",
     )).rows.filter(slot => slot.slot - 15 * 60 * 1000 > new Date().getTime());
 
-    const reqdDate = new Date().setUTCHours(15, 45);
+    const reqdDate = new Date().setUTCHours(15, 45, 0, 0);
     if (Date.now() > reqdDate) {
         await ctx.reply("Oops, you're a bit too late buddy. Slot booking time is up already!");
         return ctx.scene.leave();
