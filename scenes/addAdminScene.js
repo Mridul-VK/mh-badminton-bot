@@ -1,6 +1,6 @@
 const { Scenes } = require("telegraf");
-const db = require("../db.js");
 const { pairSlots, isAdmin, isPrivate } = require("../utils");
+const { addAdmin } = require("../utils/dbAccess.js");
 
 //Initialize the scene for collecting admin IDs
 const addAdminScene = new Scenes.BaseScene("ADD_ADMIN_SCENE");
@@ -23,7 +23,10 @@ addAdminScene.enter(async (ctx) => {
   // Exclude the bot itself and the user who initiated the command along with already existing admins in the db and the owner
   groupAdmins = groupAdmins.filter(
     (admin) =>
-      admin.user.id != ctx.botInfo.id && !admins.find(user => user.user_id == admin.user.id) && admin.user.id != ctx.from.id && admin.user.id != owner
+      admin.user.id != ctx.botInfo.id &&
+      !admins.find((user) => user.user_id == admin.user.id) &&
+      admin.user.id != ctx.from.id &&
+      admin.user.id != owner
   );
 
   // Checking if the person to be added as admin is not an admin of the group
@@ -46,21 +49,25 @@ addAdminScene.enter(async (ctx) => {
     if (adminPair.length == 2) {
       adminButtonList.push([
         {
-          text: `${adminPair[0].user.first_name} ${adminPair[0].user.last_name || ""
-            }`,
+          text: `${adminPair[0].user.first_name} ${
+            adminPair[0].user.last_name || ""
+          }`,
           callback_data: JSON.stringify({
             id: adminPair[0].user.id,
-            name: `${adminPair[0].user.first_name} ${adminPair[0].user.last_name || ""
-              }`.trim(),
+            name: `${adminPair[0].user.first_name} ${
+              adminPair[0].user.last_name || ""
+            }`.trim(),
           }),
         },
         {
-          text: `${adminPair[1].user.first_name} ${adminPair[1].user.last_name || ""
-            }`,
+          text: `${adminPair[1].user.first_name} ${
+            adminPair[1].user.last_name || ""
+          }`,
           callback_data: JSON.stringify({
             id: adminPair[1].user.id,
-            name: `${adminPair[1].user.first_name} ${adminPair[1].user.last_name || ""
-              }`.trim(),
+            name: `${adminPair[1].user.first_name} ${
+              adminPair[1].user.last_name || ""
+            }`.trim(),
           }),
         },
       ]);
@@ -68,12 +75,14 @@ addAdminScene.enter(async (ctx) => {
     } else if (adminPair.length == 1) {
       adminButtonList.push([
         {
-          text: `${adminPair[0].user.first_name} ${adminPair[0].user.last_name || ""
-            }`,
+          text: `${adminPair[0].user.first_name} ${
+            adminPair[0].user.last_name || ""
+          }`,
           callback_data: JSON.stringify({
             id: adminPair[0].user.id,
-            name: `${adminPair[0].user.first_name} ${adminPair[0].user.last_name || ""
-              }`.trim(),
+            name: `${adminPair[0].user.first_name} ${
+              adminPair[0].user.last_name || ""
+            }`.trim(),
           }),
         },
       ]);
@@ -86,26 +95,35 @@ addAdminScene.enter(async (ctx) => {
       reply_markup: { inline_keyboard: adminButtonList },
     }
   );
-  ctx.scene.state.commandUser = ctx.from; // Store the user who initiated the command 
+  ctx.scene.state.commandUser = ctx.from; // Store the user who initiated the command
 });
 
 addAdminScene.on("callback_query", async (ctx) => {
   // If the user who initiated the command is not the same as the user who clicked the button, ignore the callback
-  if (parseInt(ctx.callbackQuery.from.id) != parseInt(ctx.scene.state.commandUser.id)) {
+  if (
+    parseInt(ctx.callbackQuery.from.id) !=
+    parseInt(ctx.scene.state.commandUser.id)
+  ) {
     ctx.deleteMessage(ctx.callbackQuery.message.message_id); // Delete the message with the inline keyboard
     ctx.answerCbQuery("Only the user who initiated the command can respond.");
     return ctx.scene.leave();
   }
-  ctx.callbackQuery.message ? await ctx.deleteMessage(ctx.callbackQuery.message.message_id) : null; // Delete the message with the inline keyboard
+  ctx.callbackQuery.message
+    ? await ctx.deleteMessage(ctx.callbackQuery.message.message_id)
+    : null; // Delete the message with the inline keyboard
 
   // Add the selected admin's ID to the database
-  await db.query(
-    "INSERT INTO admin (user_id, name) VALUES ($1, $2) ON CONFLICT (user_id) DO UPDATE SET name = $2, user_id = $1",
-    [JSON.parse(ctx.callbackQuery.data).id, JSON.parse(ctx.callbackQuery.data).name]
+  await addAdmin(
+    JSON.parse(ctx.callbackQuery.data).id,
+    JSON.parse(ctx.callbackQuery.data).name
   );
 
   ctx.reply(
-    `Wokay ${ctx.callbackQuery.from.first_name}, [${JSON.parse(ctx.callbackQuery.data).name}](tg://user?id=${JSON.parse(ctx.callbackQuery.data).id}) has been successfully added!`,
+    `Wokay ${ctx.callbackQuery.from.first_name}, [${
+      JSON.parse(ctx.callbackQuery.data).name
+    }](tg://user?id=${
+      JSON.parse(ctx.callbackQuery.data).id
+    }) has been successfully added!`,
     { parse_mode: "Markdown" }
   );
   ctx.answerCbQuery("Operation Successful");
