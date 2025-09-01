@@ -20,7 +20,7 @@ module.exports = {
       await ctx.reply(
         `🚨 *CURRENT ADMINS* 🚨\n${"-".repeat(29)}\n${adminNames.join(
           "\n"
-        )}\n\nUse /addAdmin to add an admin or /removeAdmin to remove one.`,
+        )}\n\nUse /add_admin to add an admin or /remove_admin to remove one.`,
         { parse_mode: "Markdown" }
       );
     } catch (error) {
